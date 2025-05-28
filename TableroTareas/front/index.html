@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Lista de Tareas WebSocket</title>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; }
+    ul { list-style: none; padding: 0; }
+    li { padding: 8px; margin: 6px 0; border: 1px solid #ccc; display: flex; align-items: center; justify-content: space-between; }
+    li.completed span { text-decoration: line-through; color: gray; }
+    button { margin-left: 10px; }
+    span { flex-grow: 1; cursor: default; }
+  </style>
+</head>
+<body>
+  <h2>Lista de Tareas</h2>
+
+  <input type="text" id="taskInput" placeholder="Nueva tarea..." />
+  <button onclick="addTask()">Agregar</button>
+
+  <ul id="taskList"></ul>
+
+  <!-- Socket.IO client -->
+  <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+  <script>
+    const socket = io({
+    path: "/ws/",
+    transports: ["websocket"],
+  });
+    const taskList = document.getElementById("taskList");
+
+    function renderTask(task) {
+      const li = document.createElement("li");
+      li.id = `task-${task.id}`;
+      li.className = task.completed ? "completed" : "";
+
+      const span = document.createElement("span");
+      span.textContent = task.text;
+
+      const completeBtn = document.createElement("button");
+      completeBtn.textContent = task.completed ? "Incompleta" : "Completar";
+      completeBtn.onclick = () => toggleTask(task.id);
+
+      const deleteBtn = document.createElement("button");
+      deleteBtn.textContent = "Eliminar";
+      deleteBtn.onclick = () => deleteTask(task.id);
+
+      li.appendChild(span);
+      li.appendChild(completeBtn);
+      li.appendChild(deleteBtn);
+
+      taskList.appendChild(li);
+    }
+
+    function addTask() {
+      const input = document.getElementById("taskInput");
+      const text = input.value.trim();
+      if (text) {
+        socket.emit("addTask", text);
+        input.value = "";
+      }
+    }
+
+    function deleteTask(id) {
+      socket.emit("deleteTask", id);
+    }
+
+    function toggleTask(id) {
+      socket.emit("toggleTask", id);
+    }
+
+    socket.on("initialTasks", (tasks) => {
+      taskList.innerHTML = "";
+      tasks.forEach(renderTask);
+    });
+
+    socket.on("taskAdded", (task) => {
+      renderTask(task);
+    });
+
+    socket.on("taskDeleted", (taskId) => {
+      const el = document.getElementById(`task-${taskId}`);
+      if (el) el.remove();
+    });
+
+    socket.on("taskUpdated", (task) => {
+      const el = document.getElementById(`task-${task.id}`);
+      if (el) {
+        el.remove();
+        renderTask(task);
+      }
+    });
+  </script>
+</body>
+</html>

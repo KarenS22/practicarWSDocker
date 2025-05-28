@@ -1,0 +1,18 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ./server
+    container_name: pizarra-backend
+    ports:
+      - "3000:3000"
+
+  frontend:
+    build:
+      context: ./pizarraClient
+    container_name: pizarra-frontend
+    ports:
+      - "4200:80"
+    depends_on:
+      - backend
