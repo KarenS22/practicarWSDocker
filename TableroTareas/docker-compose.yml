@@ -2,7 +2,8 @@ version: "3.9"
 
 services:
   backend:
-    build: ./server
+    # build: ./server
+    image: karens22/server
     container_name: backend
     ports:
       - "3000:3000"
@@ -11,16 +12,18 @@ services:
 
   html-client:
     build: ./front
+    # image: karens22/htmlclient
     container_name: html-client
     ports:
-      - "8080:80"
+      - "8081:80"
     networks:
       - appnet
     depends_on:
       - backend
 
   angular-client:
-    build: ./client
+    # build: ./client
+    image: karens22/angularclient
     container_name: angular-client
     ports:
       - "4200:80"

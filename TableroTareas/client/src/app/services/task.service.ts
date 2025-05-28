@@ -3,19 +3,16 @@ import { Observable } from 'rxjs';
 import { io, Socket } from 'socket.io-client';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class TaskService {
-
   private socket!: Socket;
 
   constructor() {
     this.socket = io({
-  path: '/ws/', 
-  transports: ['websocket']
-});
-
-
+      path: '/ws/',
+      transports: ['websocket'],
+    });
   }
 
   addTask(text: string) {
@@ -32,7 +29,7 @@ export class TaskService {
   }
 
   onInitialTasks(): Observable<Task[]> {
-    return new Observable<Task[]>(observer => {
+    return new Observable<Task[]>((observer) => {
       this.socket.on('initialTasks', (tasks: Task[]) => {
         console.log('Received initial tasks:', tasks);
         observer.next(tasks);
@@ -41,7 +38,7 @@ export class TaskService {
   }
 
   onTaskAdded(): Observable<Task> {
-    return new Observable<Task>(observer => {
+    return new Observable<Task>((observer) => {
       this.socket.on('taskAdded', (task: Task) => {
         observer.next(task);
       });
@@ -49,7 +46,7 @@ export class TaskService {
   }
 
   onTaskDeleted(): Observable<number> {
-    return new Observable<number>(observer => {
+    return new Observable<number>((observer) => {
       this.socket.on('taskDeleted', (id: number) => {
         observer.next(id);
       });
@@ -57,16 +54,12 @@ export class TaskService {
   }
 
   onTaskToggled(): Observable<Task> {
-    return new Observable<Task>(observer => {
+    return new Observable<Task>((observer) => {
       this.socket.on('taskUpdated', (task: Task) => {
         observer.next(task);
       });
     });
   }
-
-
-
-
 }
 
 export interface Task {
