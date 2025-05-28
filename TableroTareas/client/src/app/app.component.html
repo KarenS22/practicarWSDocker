@@ -1,0 +1,20 @@
+<div style="font-family: Arial, Helvetica, sans-serif; max-width: 600px; margin: auto; padding: 20px;">
+  <h3>Lista de Tareas</h3>
+  <input #taskInput type="text" placeholder="Nueva tarea" />
+  <button style="margin-left: 5px" (click)="addTask(taskInput.value); taskInput.value = ''">
+    Agregar
+  </button>
+
+  <ul style="list-style: none; padding: 0;">
+    <li *ngFor="let task of tasks" [class.completed]="task.completed"
+    style="padding: 8px; margin: 6px 0; border: 1px solid #ccc; display: flex; align-items: center; justify-content: space-between; ">
+
+      <span *ngIf="!task.completed" style="flex-grow: 1; cursor: default;">{{ task.text }}</span>
+      <span *ngIf="task.completed" style="flex-grow: 1; cursor: default; color: gray; text-decoration: line-through;">{{ task.text }}</span>
+      <button style=" margin-left: 10px;" (click)="toggleTask(task.id)">
+        {{ task.completed ? "Incompleta" : "Completar" }}
+      </button>
+      <button style=" margin-left: 10px;" (click)="deleteTask(task.id)">Eliminar</button>
+    </li>
+  </ul>
+</div>

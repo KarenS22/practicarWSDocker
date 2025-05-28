@@ -1,0 +1,10 @@
+<h2> Pizarra colaborativa</h2>
+
+<div>
+  <button (click)="clear()">Limpiar</button>
+</div>
+<canvas #canvas width="1200" height="800"
+        style="border:1px solid #000000; cursor: crosshair;"
+        (mousedown)="onMouseDown($event)"
+        (mousemove)="onMouseMove($event)">
+</canvas>
